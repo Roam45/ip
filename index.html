@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Information</title>
+    <title>Your Location</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { text-align: center; padding: 20px; }
@@ -12,29 +12,44 @@
 </head>
 <body>
     <div class="container">
-        <h1>Your IP Information</h1>
-        
-        <!-- Server's IP (if passed dynamically from a backend like Flask) -->
-        <p class="info">Server IP: <span id="server-ip"></span></p>
+        <h1>Your Location</h1>
 
-        <!-- Client's IP fetched using ipify API -->
-        <p class="info">Your Client IP: <span id="client-ip">Loading...</span></p>
+        <p class="info">Latitude: <span id="latitude">Loading...</span></p>
+        <p class="info">Longitude: <span id="longitude">Loading...</span></p>
+        <p class="info">Location: <span id="location">Loading...</span></p>
     </div>
 
     <script>
-        // Fetching the client's IP address using the ipify API
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('client-ip').textContent = data.ip;
-            })
-            .catch(error => {
-                document.getElementById('client-ip').textContent = 'Unable to fetch IP';
-            });
+        // Check if geolocation is available
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
 
-        // Optionally, you can pass the server IP dynamically from a backend like Flask.
-        // For now, we're going to display a placeholder for the server IP.
-        document.getElementById('server-ip').textContent = '192.168.1.1'; // Example placeholder server IP
+                // Display latitude and longitude
+                document.getElementById('latitude').textContent = latitude;
+                document.getElementById('longitude').textContent = longitude;
+
+                // Use a reverse geocoding API to get the location name (city, country, etc.)
+                fetch(`https://geocode.xyz/${latitude},${longitude}?geoit=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const location = data.city ? `${data.city}, ${data.country}` : 'Location not found';
+                        document.getElementById('location').textContent = location;
+                    })
+                    .catch(() => {
+                        document.getElementById('location').textContent = 'Unable to retrieve location';
+                    });
+            }, function(error) {
+                document.getElementById('latitude').textContent = 'Geolocation failed';
+                document.getElementById('longitude').textContent = 'Geolocation failed';
+                document.getElementById('location').textContent = 'Geolocation failed';
+            });
+        } else {
+            document.getElementById('latitude').textContent = 'Geolocation not supported';
+            document.getElementById('longitude').textContent = 'Geolocation not supported';
+            document.getElementById('location').textContent = 'Geolocation not supported';
+        }
     </script>
 </body>
 </html>
