@@ -42,12 +42,6 @@
             color: white;
         }
     </style>
-    <link 
-        rel="stylesheet" 
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-oXNmMN1kGeOc7R+ur27E90UHfAZFSY3btmCdk9xr4b0="
-        crossorigin=""
-    />
 </head>
 <body>
     <header>
@@ -84,12 +78,31 @@
         <p>Free to use. No copyright restrictions.</p>
     </footer>
 
-    <script 
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-QVkHc5xs2f0nuJizMl39nIaoA0MIrIjV3Mt7KsMCp0k="
-        crossorigin="">
-    </script>
     <script>
+        // Load Google Maps after fetching the user's location
+        function initMap(lat, lng, city, region) {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat, lng },
+                zoom: 13,
+            });
+
+            const marker = new google.maps.Marker({
+                position: { lat, lng },
+                map,
+                title: `You are here: ${city}, ${region}`,
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<p>You are here: <strong>${city}, ${region}</strong></p>`,
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+
+            infoWindow.open(map, marker);
+        }
+
         // Fetch user's IP and location info
         fetch('https://ipapi.co/json/')
             .then(response => response.json())
@@ -100,17 +113,8 @@
                 document.getElementById('city').textContent = data.city || 'Unavailable';
                 document.getElementById('isp').textContent = data.org || 'Unavailable';
 
-                // Initialize map
-                const map = L.map('map').setView([data.latitude, data.longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-                }).addTo(map);
-
-                // Add marker to map
-                L.marker([data.latitude, data.longitude])
-                    .addTo(map)
-                    .bindPopup(`You are here: ${data.city}, ${data.region}`)
-                    .openPopup();
+                // Initialize the map
+                initMap(data.latitude, data.longitude, data.city, data.region);
             })
             .catch(err => {
                 console.error('Error fetching IP info:', err);
@@ -119,6 +123,13 @@
 
         // Display user's browser info
         document.getElementById('userAgent').textContent = navigator.userAgent;
+    </script>
+
+    <!-- Google Maps JavaScript API -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"
+        async
+        defer>
     </script>
 </body>
 </html>
