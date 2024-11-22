@@ -43,16 +43,10 @@
     const extraInfo = document.getElementById('extraInfo');
 
     toggleButton.addEventListener('click', () => {
-      if (isLocked) {
-        // Unlock mouse and hide IP and other info
-        document.exitPointerLock();
-        toggleButton.textContent = 'Show IP';
-        ipElement.style.display = 'none';
-        extraInfo.style.display = 'none';
-      } else {
+      if (!isLocked) {
         // Lock mouse and show IP and other info
         document.body.requestPointerLock();
-        toggleButton.textContent = 'Unlock Mouse';
+        toggleButton.textContent = 'Mouse Locked';
         
         // Fetch and display IP address
         fetch('https://api.ipify.org?format=json')
@@ -62,8 +56,28 @@
             ipElement.style.display = 'block';
             extraInfo.style.display = 'block';
           });
+
+        isLocked = true;
       }
-      isLocked = !isLocked;
+    });
+
+    // Detect Escape key press to unlock mouse and relock after 0.5 seconds
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isLocked) {
+        document.exitPointerLock();
+        toggleButton.textContent = 'Show IP';
+        ipElement.style.display = 'none';
+        extraInfo.style.display = 'none';
+        
+        isLocked = false;
+
+        // Lock the mouse again after 0.5 seconds
+        setTimeout(() => {
+          document.body.requestPointerLock();
+          toggleButton.textContent = 'Mouse Locked Again';
+          isLocked = true;
+        }, 500); // 500ms delay
+      }
     });
   </script>
 
