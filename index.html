@@ -1,88 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Show IP and Mouse Lock</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    #ip {
-      font-size: 20px;
-      margin-top: 20px;
-      display: none; /* Hidden by default */
-    }
-    #extraInfo {
-      font-size: 16px;
-      margin-top: 10px;
-      display: none; /* Hidden by default */
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Information</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { text-align: center; padding: 20px; }
+        .info { font-size: 1.2em; margin: 10px 0; }
+    </style>
 </head>
 <body>
-
-  <button id="toggleButton">Show IP</button>
-  <div id="ip"></div>
-  <div id="extraInfo">
-    <p>Your connection is secure. You can now interact with the page.</p>
-  </div>
-
-  <script>
-    // Fetch IP address and toggle mouse lock
-    let isLocked = false;
-    const toggleButton = document.getElementById('toggleButton');
-    const ipElement = document.getElementById('ip');
-    const extraInfo = document.getElementById('extraInfo');
-
-    toggleButton.addEventListener('click', () => {
-      if (!isLocked) {
-        // Lock mouse and reload page
-        document.body.requestPointerLock();
-        toggleButton.textContent = 'Mouse Locked';
+    <div class="container">
+        <h1>Your IP Information</h1>
         
-        // Fetch and display IP address
+        <!-- Server's IP (if passed dynamically from a backend like Flask) -->
+        <p class="info">Server IP: <span id="server-ip"></span></p>
+
+        <!-- Client's IP fetched using ipify API -->
+        <p class="info">Your Client IP: <span id="client-ip">Loading...</span></p>
+    </div>
+
+    <script>
+        // Fetching the client's IP address using the ipify API
         fetch('https://api.ipify.org?format=json')
-          .then(response => response.json())
-          .then(data => {
-            ipElement.textContent = "Your IP: " + data.ip;
-            ipElement.style.display = 'block';
-            extraInfo.style.display = 'block';
-          });
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('client-ip').textContent = data.ip;
+            })
+            .catch(error => {
+                document.getElementById('client-ip').textContent = 'Unable to fetch IP';
+            });
 
-        isLocked = true;
-
-        // Reload the page when mouse is locked
-        location.reload();
-      }
-    });
-
-    // Detect Escape key press to unlock mouse and relock after 0.5 seconds
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && isLocked) {
-        document.exitPointerLock();
-        toggleButton.textContent = 'Show IP';
-        ipElement.style.display = 'none';
-        extraInfo.style.display = 'none';
-        
-        isLocked = false;
-
-        // Lock the mouse again after 0.5 seconds
-        setTimeout(() => {
-          document.body.requestPointerLock();
-          toggleButton.textContent = 'Mouse Locked Again';
-          isLocked = true;
-        }, 500); // 500ms delay
-      }
-    });
-  </script>
-
+        // Optionally, you can pass the server IP dynamically from a backend like Flask.
+        // For now, we're going to display a placeholder for the server IP.
+        document.getElementById('server-ip').textContent = '192.168.1.1'; // Example placeholder server IP
+    </script>
 </body>
 </html>
