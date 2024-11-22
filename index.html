@@ -22,24 +22,40 @@
         main {
             padding: 20px;
         }
-        .info, .warning, #map {
+        .info, .warning {
             background: white;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        #map {
+        iframe {
+            width: 100%;
             height: 400px;
-        }
-        h1, h2 {
-            margin-top: 0;
+            border: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         footer {
             text-align: center;
             padding: 10px 0;
             background-color: #0077cc;
             color: white;
+        }
+        .coordinates {
+            background: #e0e0e0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .coordinates a {
+            color: #0077cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .coordinates a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -55,22 +71,34 @@
             <p><strong>Region:</strong> <span id="region">Loading...</span></p>
             <p><strong>City:</strong> <span id="city">Loading...</span></p>
             <p><strong>ISP:</strong> <span id="isp">Loading...</span></p>
-            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
         </div>
 
+        <!-- Coordinates section with clickable link -->
+        <div class="coordinates">
+            <h2>Your Coordinates</h2>
+            <p><strong>Latitude:</strong> <span id="latitude">Loading...</span></p>
+            <p><strong>Longitude:</strong> <span id="longitude">Loading...</span></p>
+            <p><strong>View on Google Maps:</strong> <a id="mapLink" href="#" target="_blank">Click here to view location</a></p>
+        </div>
+
+        <!-- Google Map iframe -->
         <div class="info">
             <h2>Your Location on the Map</h2>
-            <div id="map"></div>
+            <iframe 
+                id="map" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
 
         <div class="warning">
             <h2>Potential Risks of Unsecured Wi-Fi</h2>
             <ul>
-                <li>**Data Theft**: Hackers can intercept sensitive data such as passwords and credit card details.</li>
-                <li>**Unauthorized Access**: Malicious users may exploit your Wi-Fi to access your connected devices.</li>
-                <li>**Illegal Activities**: Your network could be used for unlawful activities, making you liable.</li>
-                <li>**Malware Injection**: Cybercriminals can introduce malware or ransomware into your devices.</li>
-                <li>**Network Monitoring**: An attacker could track your browsing habits and compromise your privacy.</li>
+                <li><strong>Data Theft:</strong> Hackers can intercept sensitive data such as passwords and credit card details.</li>
+                <li><strong>Unauthorized Access:</strong> Malicious users may exploit your Wi-Fi to access your connected devices.</li>
+                <li><strong>Illegal Activities:</strong> Your network could be used for unlawful activities, making you liable.</li>
+                <li><strong>Malware Injection:</strong> Cybercriminals can introduce malware or ransomware into your devices.</li>
+                <li><strong>Network Monitoring:</strong> An attacker could track your browsing habits and compromise your privacy.</li>
             </ul>
         </div>
     </main>
@@ -79,30 +107,6 @@
     </footer>
 
     <script>
-        // Load Google Maps after fetching the user's location
-        function initMap(lat, lng, city, region) {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat, lng },
-                zoom: 13,
-            });
-
-            const marker = new google.maps.Marker({
-                position: { lat, lng },
-                map,
-                title: `You are here: ${city}, ${region}`,
-            });
-
-            const infoWindow = new google.maps.InfoWindow({
-                content: `<p>You are here: <strong>${city}, ${region}</strong></p>`,
-            });
-
-            marker.addListener("click", () => {
-                infoWindow.open(map, marker);
-            });
-
-            infoWindow.open(map, marker);
-        }
-
         // Fetch user's IP and location info
         fetch('https://ipapi.co/json/')
             .then(response => response.json())
@@ -113,23 +117,24 @@
                 document.getElementById('city').textContent = data.city || 'Unavailable';
                 document.getElementById('isp').textContent = data.org || 'Unavailable';
 
-                // Initialize the map
-                initMap(data.latitude, data.longitude, data.city, data.region);
+                // Update Coordinates
+                const latitude = data.latitude;
+                const longitude = data.longitude;
+                document.getElementById('latitude').textContent = latitude || 'Unavailable';
+                document.getElementById('longitude').textContent = longitude || 'Unavailable';
+
+                // Create Google Maps link
+                const mapLink = document.getElementById('mapLink');
+                mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+                // Update Google Maps iframe with user's coordinates
+                const mapIframe = document.getElementById('map');
+                mapIframe.src = `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${latitude},${longitude}&zoom=13`;
             })
             .catch(err => {
                 console.error('Error fetching IP info:', err);
                 document.getElementById('map').innerHTML = '<p>Error loading map.</p>';
             });
-
-        // Display user's browser info
-        document.getElementById('userAgent').textContent = navigator.userAgent;
-    </script>
-
-    <!-- Google Maps JavaScript API -->
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"
-        async
-        defer>
     </script>
 </body>
 </html>
