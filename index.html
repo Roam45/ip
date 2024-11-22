@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP and Device Info</title>
+</head>
+<body>
+    <h1>Your Information</h1>
+    <p><strong>IP Address:</strong> <span id="ip"></span></p>
+    <p><strong>Country:</strong> <span id="country"></span></p>
+    <p><strong>Region:</strong> <span id="region"></span></p>
+    <p><strong>City:</strong> <span id="city"></span></p>
+    <p><strong>ISP:</strong> <span id="isp"></span></p>
+    <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+
+    <script>
+        // Fetch user's IP and location info
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip').textContent = data.ip || 'Unavailable';
+                document.getElementById('country').textContent = data.country_name || 'Unavailable';
+                document.getElementById('region').textContent = data.region || 'Unavailable';
+                document.getElementById('city').textContent = data.city || 'Unavailable';
+                document.getElementById('isp').textContent = data.org || 'Unavailable';
+            })
+            .catch(err => {
+                console.error('Error fetching IP info:', err);
+            });
+
+        // Display user's browser info
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+    </script>
+</body>
+</html>
