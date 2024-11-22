@@ -42,20 +42,15 @@
             background-color: #0077cc;
             color: white;
         }
-        .coordinates {
+        .location-labels {
             background: #e0e0e0;
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-weight: bold;
         }
-        .coordinates a {
-            color: #0077cc;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .coordinates a:hover {
-            text-decoration: underline;
+        .location-labels p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -73,12 +68,11 @@
             <p><strong>ISP:</strong> <span id="isp">Loading...</span></p>
         </div>
 
-        <!-- Coordinates section with clickable link -->
-        <div class="coordinates">
-            <h2>Your Coordinates</h2>
-            <p><strong>Latitude:</strong> <span id="latitude">Loading...</span></p>
-            <p><strong>Longitude:</strong> <span id="longitude">Loading...</span></p>
-            <p><strong>View on Google Maps:</strong> <a id="mapLink" href="#" target="_blank">Click here to view location</a></p>
+        <!-- Location Labels Section -->
+        <div class="location-labels">
+            <h2>Your Location Labels</h2>
+            <p><strong>Home:</strong> <span id="home">Loading...</span></p>
+            <p><strong>Work/School:</strong> <span id="work">Loading...</span></p>
         </div>
 
         <!-- Google Map iframe -->
@@ -107,6 +101,46 @@
     </footer>
 
     <script>
+        // Function to determine if the current time is day or night
+        function getTimeOfDay() {
+            const hour = new Date().getHours();
+            return hour >= 6 && hour < 18 ? 'day' : 'night';
+        }
+
+        // Function to save locations in localStorage
+        function saveLocation(latitude, longitude) {
+            const timeOfDay = getTimeOfDay();
+            const locationKey = timeOfDay === 'night' ? 'nightLocations' : 'dayLocations';
+            const locations = JSON.parse(localStorage.getItem(locationKey)) || [];
+
+            // Add new location to the array with timestamp
+            locations.push({ latitude, longitude, timestamp: Date.now() });
+            localStorage.setItem(locationKey, JSON.stringify(locations));
+
+            return locations;
+        }
+
+        // Function to calculate most frequent location
+        function getMostFrequentLocation(locations) {
+            const locationCount = {};
+
+            locations.forEach(location => {
+                const key = `${location.latitude},${location.longitude}`;
+                locationCount[key] = (locationCount[key] || 0) + 1;
+            });
+
+            let mostFrequentLocation = null;
+            let maxCount = 0;
+            for (let key in locationCount) {
+                if (locationCount[key] > maxCount) {
+                    maxCount = locationCount[key];
+                    mostFrequentLocation = key;
+                }
+            }
+
+            return mostFrequentLocation;
+        }
+
         // Fetch user's IP and location info
         fetch('https://ipapi.co/json/')
             .then(response => response.json())
@@ -117,19 +151,27 @@
                 document.getElementById('city').textContent = data.city || 'Unavailable';
                 document.getElementById('isp').textContent = data.org || 'Unavailable';
 
-                // Update Coordinates
                 const latitude = data.latitude;
                 const longitude = data.longitude;
-                document.getElementById('latitude').textContent = latitude || 'Unavailable';
-                document.getElementById('longitude').textContent = longitude || 'Unavailable';
 
-                // Create Google Maps link
-                const mapLink = document.getElementById('mapLink');
-                mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                // Save the location to localStorage
+                saveLocation(latitude, longitude);
 
-                // Update Google Maps iframe with user's coordinates
+                // Update the Google Map iframe with the current location
                 const mapIframe = document.getElementById('map');
                 mapIframe.src = `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${latitude},${longitude}&zoom=13`;
+
+                // Get day and night locations from localStorage
+                const dayLocations = JSON.parse(localStorage.getItem('dayLocations')) || [];
+                const nightLocations = JSON.parse(localStorage.getItem('nightLocations')) || [];
+
+                // Determine most frequent locations for day and night
+                const homeLocation = getMostFrequentLocation(nightLocations);
+                const workLocation = getMostFrequentLocation(dayLocations);
+
+                // Update labels
+                document.getElementById('home').textContent = homeLocation ? homeLocation : 'Not yet determined';
+                document.getElementById('work').textContent = workLocation ? workLocation : 'Not yet determined';
             })
             .catch(err => {
                 console.error('Error fetching IP info:', err);
