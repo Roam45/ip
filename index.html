@@ -3,51 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your IP and Location</title>
+    <title>Your IP and Wi-Fi Security</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: #f9f9f9;
+            background-color: #f4f4f9;
             color: #333;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #0077cc;
-            color: white;
+            background-color: #6c63ff;
+            color: #fff;
             padding: 20px;
             text-align: center;
         }
         main {
             padding: 20px;
         }
-        .info, .warning, #map {
-            background: white;
+        .info {
+            background: #fff;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        #map {
-            height: 400px;
-        }
-        h1, h2 {
+        h1 {
             margin-top: 0;
+        }
+        .warning {
+            background: #ffebcc;
+            border: 1px solid #ffcc00;
+            padding: 15px;
+            border-radius: 8px;
         }
         footer {
             text-align: center;
             padding: 10px 0;
-            background-color: #0077cc;
-            color: white;
+            background-color: #6c63ff;
+            color: #fff;
+            margin-top: 20px;
         }
     </style>
-    <link 
-        rel="stylesheet" 
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-oXNmMN1kGeOc7R+ur27E90UHfAZFSY3btmCdk9xr4b0="
-        crossorigin=""
-    />
 </head>
 <body>
     <header>
@@ -64,11 +62,6 @@
             <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
         </div>
 
-        <div class="info">
-            <h2>Your Location on the Map</h2>
-            <div id="map"></div>
-        </div>
-
         <div class="warning">
             <h2>Potential Risks of Unsecured Wi-Fi</h2>
             <ul>
@@ -81,14 +74,9 @@
         </div>
     </main>
     <footer>
-        <p>Free to use. No copyright restrictions.</p>
+        <p>&copy; 2024 Wi-Fi Safety Tips</p>
     </footer>
 
-    <script 
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-QVkHc5xs2f0nuJizMl39nIaoA0MIrIjV3Mt7KsMCp0k="
-        crossorigin="">
-    </script>
     <script>
         // Fetch user's IP and location info
         fetch('https://ipapi.co/json/')
@@ -99,22 +87,9 @@
                 document.getElementById('region').textContent = data.region || 'Unavailable';
                 document.getElementById('city').textContent = data.city || 'Unavailable';
                 document.getElementById('isp').textContent = data.org || 'Unavailable';
-
-                // Initialize map
-                const map = L.map('map').setView([data.latitude, data.longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-                }).addTo(map);
-
-                // Add marker to map
-                L.marker([data.latitude, data.longitude])
-                    .addTo(map)
-                    .bindPopup(`You are here: ${data.city}, ${data.region}`)
-                    .openPopup();
             })
             .catch(err => {
                 console.error('Error fetching IP info:', err);
-                document.getElementById('map').innerHTML = '<p>Error loading map.</p>';
             });
 
         // Display user's browser info
