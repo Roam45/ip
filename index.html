@@ -25,44 +25,33 @@
       font-size: 16px;
       cursor: pointer;
     }
-    #lockArea {
-      width: 300px;
-      height: 300px;
-      background-color: lightgray;
-      margin: 20px auto;
-      position: relative;
-    }
   </style>
 </head>
 <body>
 
   <button id="toggleButton">Show IP</button>
-  <div id="lockArea">
-    <p style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Mouse Lock Area</p>
-  </div>
   <div id="ip"></div>
   <div id="extraInfo">
     <p>Your connection is secure. You can now interact with the page.</p>
   </div>
 
   <script>
-    // Fetch IP address
+    // Fetch IP address and toggle mouse lock
     let isLocked = false;
     const toggleButton = document.getElementById('toggleButton');
     const ipElement = document.getElementById('ip');
     const extraInfo = document.getElementById('extraInfo');
-    const lockArea = document.getElementById('lockArea');
 
     toggleButton.addEventListener('click', () => {
       if (isLocked) {
-        // Unlock mouse and show IP and other info
+        // Unlock mouse and hide IP and other info
         document.exitPointerLock();
         toggleButton.textContent = 'Show IP';
         ipElement.style.display = 'none';
         extraInfo.style.display = 'none';
       } else {
         // Lock mouse and show IP and other info
-        lockArea.requestPointerLock();
+        document.body.requestPointerLock();
         toggleButton.textContent = 'Unlock Mouse';
         
         // Fetch and display IP address
