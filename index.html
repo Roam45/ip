@@ -3,16 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP and Device Info</title>
+    <title>Your IP and Wi-Fi Security</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #6c63ff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        .info {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .warning {
+            background: #ffebcc;
+            border: 1px solid #ffcc00;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #6c63ff;
+            color: #fff;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Your Information</h1>
-    <p><strong>IP Address:</strong> <span id="ip"></span></p>
-    <p><strong>Country:</strong> <span id="country"></span></p>
-    <p><strong>Region:</strong> <span id="region"></span></p>
-    <p><strong>City:</strong> <span id="city"></span></p>
-    <p><strong>ISP:</strong> <span id="isp"></span></p>
-    <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+    <header>
+        <h1>Your IP and Wi-Fi Security</h1>
+    </header>
+    <main>
+        <div class="info">
+            <h2>Your Information</h2>
+            <p><strong>IP Address:</strong> <span id="ip">Loading...</span></p>
+            <p><strong>Country:</strong> <span id="country">Loading...</span></p>
+            <p><strong>Region:</strong> <span id="region">Loading...</span></p>
+            <p><strong>City:</strong> <span id="city">Loading...</span></p>
+            <p><strong>ISP:</strong> <span id="isp">Loading...</span></p>
+            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        </div>
+
+        <div class="warning">
+            <h2>Potential Risks of Unsecured Wi-Fi</h2>
+            <ul>
+                <li>**Data Theft**: Hackers can intercept sensitive data such as passwords and credit card details.</li>
+                <li>**Unauthorized Access**: Malicious users may exploit your Wi-Fi to access your connected devices.</li>
+                <li>**Illegal Activities**: Your network could be used for unlawful activities, making you liable.</li>
+                <li>**Malware Injection**: Cybercriminals can introduce malware or ransomware into your devices.</li>
+                <li>**Network Monitoring**: An attacker could track your browsing habits and compromise your privacy.</li>
+            </ul>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Wi-Fi Safety Tips</p>
+    </footer>
 
     <script>
         // Fetch user's IP and location info
