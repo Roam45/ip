@@ -44,7 +44,7 @@
 
     toggleButton.addEventListener('click', () => {
       if (!isLocked) {
-        // Lock mouse and show IP and other info
+        // Lock mouse and reload page
         document.body.requestPointerLock();
         toggleButton.textContent = 'Mouse Locked';
         
@@ -58,6 +58,9 @@
           });
 
         isLocked = true;
+
+        // Reload the page when mouse is locked
+        location.reload();
       }
     });
 
