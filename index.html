@@ -3,38 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Location Based on IP</title>
+    <title>IP</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { text-align: center; padding: 20px; }
-        .info { font-size: 1.2em; margin: 10px 0; }
+        .info { font-size: 1.2em; text-align: center; margin: 10px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Your Location Based on IP</h1>
-
-        <p class="info">IP Address: <span id="ip">Loading...</span></p>
-        <p class="info">Location: <span id="location">Loading...</span></p>
+        <h1>IP</h1>
+        <p class="info" id="ip">Loading...</p>
     </div>
 
     <script>
-        // Fetch user's IP and location from ipinfo.io
-        fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE')
-            .then(response => response.json())
-            .then(data => {
-                // Extract IP and location data
-                const ip = data.ip;
-                const location = data.city + ', ' + data.region + ', ' + data.country;
-                
-                // Display IP and location
-                document.getElementById('ip').textContent = ip;
-                document.getElementById('location').textContent = location;
-            })
-            .catch(error => {
-                document.getElementById('ip').textContent = 'Unable to retrieve IP';
-                document.getElementById('location').textContent = 'Unable to retrieve location';
-            });
+        fetch('https://api.ipify.org?format=json')
+          .then(response => response.json())
+          .then(data => {
+            console.log("Your IP address is:", data.ip);
+          });
+
     </script>
 </body>
 </html>
