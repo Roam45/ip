@@ -1,28 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { text-align: center; padding: 20px; }
-        .info { font-size: 1.2em; text-align: center; margin: 10px 0; }
-    </style>
+  <title>Ip</title>
 </head>
 <body>
-    <div class="container">
-        <h1>IP</h1>
-        <p class="info" id="ip">Loading...</p>
-    </div>
+  <h1>IP Address:</h1>
+  <p id="ip">Loading...</p>
 
-    <script>
-        fetch('https://api.ipify.org?format=json')
-          .then(response => response.json())
-          .then(data => {
-            console.log("Your IP address is:", data.ip);
-          });
-
-    </script>
+  <script>
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('ip').textContent = data.ip;
+      })
+      .catch(error => {
+        document.getElementById('ip').textContent = 'Failed to load IP.';
+        console.error('Error fetching IP:', error);
+      });
+  </script>
 </body>
 </html>
